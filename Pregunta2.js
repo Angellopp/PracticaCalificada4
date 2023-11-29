@@ -31,3 +31,19 @@ class Charizard extends Pokemon{
         console.log(`Se usó ${this.movimiento} con un ataque de ${this.ataque}`)
     }
 }
+class User {
+    _password;
+  
+    constructor(username, password) {
+      this._password = password;
+    }
+  
+    checkPassword(inputPassword) {
+      return inputPassword === this._password;
+    }
+  }
+  
+  const user = new User("Angello", "password");
+  
+  console.log(user.checkPassword("password123")); // false
+  console.log(user.checkPassword("password")); // true

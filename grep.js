@@ -2,47 +2,39 @@
 
 const fs = require('fs');
 
-// Obtener argumentos de la línea de comandos
-const args = process.argv.slice(2);
+// Obtener los argumentos de la línea de comandos
+const searchString = process.argv[2];
+const files = process.argv.slice(3);
 
-// Función principal de grep
-function grep(searchString, flags, files) {
-  let result = '';
-
-  for (const file of files) {
-    const content = fs.readFileSync(file, 'utf8').split('\n');
-
-    for (let i = 0; i < content.length; i++) {
-      const line = content[i];
-
-      // Aplicar indicadores
-      if (
-        (flags.includes('i') && line.toLowerCase().includes(searchString.toLowerCase())) ||
-        (!flags.includes('i') && line.includes(searchString))
-      ) {
-        if (flags.includes('l')) {
-          result += `${file}\n`;
-          break; // Mostrar solo el nombre del archivo
-        } else {
-          const lineNumber = flags.includes('n') ? `${i + 1}:` : '';
-          const matchedLine = flags.includes('x') ? line : `${lineNumber}${line}`;
-          result += `${file}:${matchedLine}\n`;
-        }
-      } else if (flags.includes('v')) {
-        // Invertir el programa
-        result += `${file}:${i + 1}:${line}\n`;
-      }
+// Leer y buscar en los archivos
+files.forEach((file) => {
+  // Leer contenido del archivo
+  fs.readFile(file, 'utf8', (err, data) => {
+    if (err) {
+      console.error(`Error al leer el archivo ${file}: ${err}`);
+      return;
     }
-  }
 
-  return result.trim();
-}
+    // Dividir el contenido en líneas
+    const lines = data.split('\n');
 
-// Parsear argumentos
-const searchString = args.shift();
-const flags = args.filter(arg => arg.startsWith('-'));
-const files = args.filter(arg => !arg.startsWith('-'));
+    // Buscar líneas que contienen la cadena de búsqueda
+    const matchingLines = lines.filter((line, lineNumber) => {
+      if (line.includes(searchString)) {
+        // Si se proporcionó el indicador -n, agregar el número de línea
+        if (process.argv.includes('-n')) {
+          line = `${lineNumber + 1}:${line}`;
+        }
+        return true;
+      }
+      return false;
+    });
 
-// Ejecutar grep
-const result = grep(searchString, flags, files);
-console.log(result);
+    // Mostrar las líneas coincidentes
+    if (matchingLines.length > 0) {
+      console.log(`Archivo: ${file}`);
+      console.log(matchingLines.join('\n'));
+      console.log();
+    }
+  });
+});

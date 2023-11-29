@@ -178,6 +178,82 @@ Aquí, Movie.order(:title) es una llamada para ActiveRecord, que es la capa de a
 
 1.	Extienda el código del controlador del código siguiente dado con los métodos edit y update para las críticas. Usa un filtro de controlador para asegurarte de que un usuario sólo puede editar o actualizar sus propias críticas. Revisa el código dado en la evaluación y actualiza tus repositorios de actividades (no se admite nada nuevo aquí). Debes mostrar los resultados. 
 
+Para extender el código del controlador con los métodos edit y update para las críticas:
+
+Agregamos el método edit:
+```ruby
+def edit
+  @review = Review.find(params[:id])
+end
+```
+
+Este método encuentra la crítica por su ID y la asigna a la variable de instancia ``@review``.
+
+Agregamos el método update:
+```ruby
+def review_params
+  params.require(:review).permit(:rating, :comment)
+end
+
+def update
+  @review = Review.find(params[:id])
+
+  if @review.update(review_params)
+    redirect_to @review, notice: "Crítica actualizada exitosamente."
+  else
+    render :edit
+  end
+end
+
+```
+El método ``update`` encuentra la crítica por su ID y luego intenta actualizarla con los parámetros del método ``review_params``. Si la actualización tiene éxito, el usuario es redirigido a la página de la crítica actualizada con un mensaje de éxito. De lo contrario, se vuelve a renderizar la vista de edición.
+
+Ahora implementamos un filtro en tu controlador para asegurarte de que un usuario solo pueda editar o actualizar sus propias críticas.
+
+Agregamos el callback `before_action` al inicio:
+
+```ruby
+before_action :authorize_user, only: [:edit, :update]
+
+def authorize_user
+  @review = Review.find(params[:id])
+  unless current_user == @review.moviegoer
+    redirect_to root_path, alert: "No estás autorizado para realizar esta acción."
+  end
+end
+```
+
+Verificamos si el usuario actual es el mismo que el moviegoer asociado con la crítica. Si no son el mismo, el usuario es redirigido al path raíz con una alerta que indica que no están autorizados.
+
+# Pregunta 5: Preguntas:
+## 1.	Un inconveniente de la herencia de prototipos es que todos los atributos (propiedades) de los objetos son públicos. Sin embargo, podemos aprovechar las clausuras para obtener atributos privados. Crea un sencillo constructor para los objetos User que acepte un nombre de usuario y una contraseña, y proporcione un método checkPassword que indique si la contraseña proporcionada es correcta, pero que deniegue la inspección de la contraseña en sí. Esta expresión de “sólo métodos de acceso” se usa ampliamente en jQuery. Sugerencia:  El constructor debe devolver un objeto en el que una de sus propiedades es una función que aprovecha las clausuras de JavaScript para ‘recordar’ la contraseña proporcionada inicialmente al constructor. El objeto devuelto no debería tener ninguna propiedad que contenga la contraseña).
+
+```javascript
+class User {
+  #password;
+
+  constructor(username, password) {
+    this.#password = password;
+  }
+
+  checkPassword(inputPassword) {
+    return inputPassword === this.#password;
+  }
+}
+
+const user = new User("Angello", "password");
+
+console.log(user.checkPassword("password123")); // false
+console.log(user.checkPassword("password")); // true
+```
+
+El constructor ``User`` acepta un nombre de usuario y una contraseña. Dentro del constructor, almacenamos la contraseña en una variable local llamada ``#password``. Luego, devolvemos un objeto que tiene un método ``checkPassword``. Este método compara la contraseña proporcionada como argumento con la contraseña almacenada y devuelve ``true`` si son iguales, de lo contrario, devuelve ``false``.
+
+Debido a las clausuras, la variable ``#password`` se mantiene en memoria incluso después de que el constructor haya terminado de ejecutarse.
+
+Podemos verlo:
+![Alt text](image-3.png)
+
 
 
 
