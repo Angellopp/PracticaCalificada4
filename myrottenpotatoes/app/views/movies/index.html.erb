@@ -1,0 +1,21 @@
+<h1>All Movies</h1>
+
+<%= link_to 'Add Movie', new_movie_path, :class => 'btn btn-primary' %>
+
+<div id="movies">
+  <div class="row">
+    <div class="col-1">n</div>
+    <div class="col-6">Movie Title</div>
+    <div class="col-2">Rating</div>
+    <div class="col-2">Release Date</div>
+  </div>
+  <%- @movies.each.with_index(1) do |movie, index| %>
+    <div class="row">
+      <div class="col-1"><%= index %></div>
+      <div class="col-6"> <%= link_to movie.title, movie_path(movie), data: { method: 'get' } %> </div>
+      <div class="col-2"> <%= movie.rating %></div>
+      <div class="col-2"> <%= movie.release_date.strftime('%F') %> </div>
+    </div>
+  <% end %>
+</div>
+
