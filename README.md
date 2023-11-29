@@ -1,4 +1,48 @@
 # Pregunta 1:  
+
+```javascript
+#!/usr/bin/env node
+
+const fs = require('fs');
+
+// Obtener los argumentos de la línea de comandos
+const searchString = process.argv[2];
+const files = process.argv.slice(3);
+
+// Leer y buscar en los archivos
+files.forEach((file) => {
+  fs.readFile(file, 'utf8', (err, data) => {
+    if (err) {
+      console.error(`Error al leer el archivo ${file}: ${err}`);
+      return;
+    }
+    const lines = data.split('\n');
+
+    const matchingLines = lines.filter((line, lineNumber) => {
+      if (line.includes(searchString)) {
+        if (process.argv.includes('-n')) {
+          line = `${lineNumber + 1}:${line}`;
+        }
+        return true;
+      }
+      return false;
+    });
+
+    // Mostrar las líneas coincidentes
+    if (matchingLines.length > 0) {
+      console.log(`Archivo: ${file}`);
+      console.log(matchingLines.join('\n'));
+      console.log();
+    }
+  });
+});
+```
+
+Utilizamos process.argv para recuperar los argumentos de la línea de comandos. process.argv[2] contiene la cadena de búsqueda y process.argv.slice(3) contiene los nombres de los archivos en los que se buscará.
+
+Luego, iteramos sobre cada archivo y usamos fs.readFile para leer su contenido. Dividimos el contenido en líneas utilizando split('\n') y filtramos las líneas que contienen la cadena de búsqueda utilizando filter. Si se proporciona el indicador -n, agregamos el número de línea a las líneas coincidentes.
+
+Finalmente, mostramos las líneas coincidentes agrupadas por archivo utilizando console.log.
 # Pregunta 2: Diseño de Clases en JavaScript: Pokemon y Charizard
 
 ## Clase `Pokemon`
