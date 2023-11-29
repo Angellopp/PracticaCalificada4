@@ -298,6 +298,27 @@ Debido a las clausuras, la variable ``#password`` se mantiene en memoria incluso
 Podemos verlo:
 ![Alt text](image-3.png)
 
+## 3.	En el código utilizado en la sección de eventos y funciones callback, supongamos que no puedes modificar el código del servidor para añadir la clase CSS adult a las filas de la tabla movies. ¿Cómo identificaría las filas que están ocultas utilizando sólo código JavaScript del lado cliente?
+
+
+Podemos identificar estas filas utilizando solo código JavaScript del lado del cliente. Una forma de hacerlo es buscar las filas ocultas basándote en alguna característica o propiedad específica de las filas ocultas.
+
+```javascript
+// Obtener todas las filas de la tabla
+const rows = document.querySelectorAll('#moviesTable tbody tr');
+
+// Filtrar las filas ocultas
+const hiddenRows = Array.from(rows).filter(row => {
+  return row.getAttribute('data-hidden') === 'true';
+});
+
+hiddenRows.forEach(row => {
+  console.log(row);
+});
+```
+
+Utilizamos ``document.querySelectorAll`` para seleccionar todas las filas de la tabla. Luego, utilizamos ``Array.from`` para convertir el resultado en un array y aplicamos el método ``filter`` para filtrar las filas ocultas.
+
 
 
 
